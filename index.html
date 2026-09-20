@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StockFlow — Inventory & Stock Management</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <span class="brand-mark">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 7L12 3L21 7L12 11L3 7Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M3 12L12 16L21 12" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M3 17L12 21L21 17" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+      </span>
+      <span class="brand-name">StockFlow</span>
+    </div>
+
+    <nav class="nav">
+      <button class="nav-item active" data-view="dashboard">
+        <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+        Dashboard
+      </button>
+      <button class="nav-item" data-view="products">
+        <svg viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+        Products
+      </button>
+      <button class="nav-item" data-view="activity">
+        <svg viewBox="0 0 24 24"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg>
+        Inventory Activity
+      </button>
+      <button class="nav-item" data-view="suppliers">
+        <svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h1m4 0h1m-6 4h1m4 0h1m-6 4h1m4 0h1"/></svg>
+        Suppliers
+      </button>
+      <button class="nav-item" data-view="reports">
+        <svg viewBox="0 0 24 24"><path d="M4 19V5m5 14v-8m5 8V9m5 10V4"/></svg>
+        Reports
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="mini-card">
+        <p class="mini-card-title">Need to restock?</p>
+        <p class="mini-card-text">Check the low stock report before your next order.</p>
+        <button class="mini-card-btn" id="goLowStock">View report</button>
+      </div>
+    </div>
+  </aside>
+
+  <div class="scrim" id="scrim"></div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <header class="topbar">
+      <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+        <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <div class="page-title">
+        <h1 id="pageTitle">Dashboard</h1>
+        <p id="pageSubtitle">Overview of your inventory health</p>
+      </div>
+      <div class="topbar-actions">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <input type="text" id="globalSearch" placeholder="Search products…">
+        </div>
+        <div class="user-chip">
+          <div class="avatar">MR</div>
+          <div class="user-info">
+            <span class="user-name">Maya Reyes</span>
+            <span class="user-role">Warehouse Manager</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="content">
+
+      <!-- DASHBOARD VIEW -->
+      <section class="view active" id="view-dashboard">
+        <div class="stat-grid">
+          <div class="stat-card">
+            <div class="stat-icon icon-blue"><svg viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg></div>
+            <div><p class="stat-label">Total Products</p><p class="stat-value" id="statTotalProducts">0</p></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon icon-teal"><svg viewBox="0 0 24 24"><path d="M3 3h18v18H3V3zm4 14V7m5 10v-6m5 6v-3"/></svg></div>
+            <div><p class="stat-label">Total Stock Units</p><p class="stat-value" id="statTotalStock">0</p></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon icon-amber"><svg viewBox="0 0 24 24"><path d="M12 2L1 21h22L12 2zm0 6v6m0 4h.01"/></svg></div>
+            <div><p class="stat-label">Low Stock Items</p><p class="stat-value" id="statLowStock">0</p></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon icon-red"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 9l6 6m0-6l-6 6"/></svg></div>
+            <div><p class="stat-label">Out of Stock</p><p class="stat-value" id="statOutStock">0</p></div>
+          </div>
+          <div class="stat-card wide">
+            <div class="stat-icon icon-green"><svg viewBox="0 0 24 24"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+            <div><p class="stat-label">Inventory Value</p><p class="stat-value" id="statInvValue">₱0.00</p></div>
+          </div>
+        </div>
+
+        <div class="panel-grid">
+          <div class="panel">
+            <div class="panel-head">
+              <h2>Recent Inventory Activity</h2>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Date</th><th>Product</th><th>Type</th><th>Qty</th><th>Reason</th></tr></thead>
+                <tbody id="recentActivityBody"></tbody>
+              </table>
+            </div>
+            <div class="empty-state" id="recentActivityEmpty" hidden>
+              <p>No inventory activity yet</p>
+              <span>Stock movements will appear here once you add or remove stock.</span>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head"><h2>Stock Status Breakdown</h2></div>
+            <div class="status-bars" id="statusBars"></div>
+            <div class="panel-head" style="margin-top:20px;"><h2>Top Categories</h2></div>
+            <div class="status-bars" id="categoryBars"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PRODUCTS VIEW -->
+      <section class="view" id="view-products">
+        <div class="toolbar">
+          <div class="toolbar-left">
+            <div class="search-box">
+              <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+              <input type="text" id="productSearch" placeholder="Search by name or ID…">
+            </div>
+            <select id="categoryFilter" class="select-input"><option value="">All Categories</option></select>
+            <select id="statusFilter" class="select-input">
+              <option value="">All Statuses</option>
+              <option value="In Stock">In Stock</option>
+              <option value="Low Stock">Low Stock</option>
+              <option value="Out of Stock">Out of Stock</option>
+            </select>
+            <select id="sortProducts" class="select-input">
+              <option value="name-asc">Name (A–Z)</option>
+              <option value="name-desc">Name (Z–A)</option>
+              <option value="stock-asc">Stock (Low–High)</option>
+              <option value="stock-desc">Stock (High–Low)</option>
+              <option value="price-asc">Price (Low–High)</option>
+              <option value="price-desc">Price (High–Low)</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" id="addProductBtn">
+            <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg> Add Product
+          </button>
+        </div>
+
+        <div class="panel">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Product ID</th><th>Name</th><th>Category</th><th>Supplier</th>
+                  <th>Price</th><th>Stock</th><th>Reorder Lvl</th><th>Status</th><th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="productsBody"></tbody>
+            </table>
+          </div>
+          <div class="empty-state" id="productsEmpty" hidden>
+            <p>No products found</p>
+            <span>Try adjusting your search or filters, or add a new product.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ACTIVITY VIEW -->
+      <section class="view" id="view-activity">
+        <div class="toolbar">
+          <div class="toolbar-left">
+            <select id="activityTypeFilter" class="select-input">
+              <option value="">All Movements</option>
+              <option value="Stock In">Stock In</option>
+              <option value="Stock Out">Stock Out</option>
+            </select>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Date</th><th>Product</th><th>Type</th><th>Quantity</th><th>Reason</th></tr></thead>
+              <tbody id="activityBody"></tbody>
+            </table>
+          </div>
+          <div class="empty-state" id="activityEmpty" hidden>
+            <p>No inventory movements recorded</p>
+            <span>Use "Add Stock" or "Remove Stock" on a product to log activity.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- SUPPLIERS VIEW -->
+      <section class="view" id="view-suppliers">
+        <div class="toolbar">
+          <div class="toolbar-left">
+            <div class="search-box">
+              <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+              <input type="text" id="supplierSearch" placeholder="Search suppliers…">
+            </div>
+          </div>
+          <button class="btn btn-primary" id="addSupplierBtn">
+            <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg> Add Supplier
+          </button>
+        </div>
+        <div class="card-grid" id="suppliersGrid"></div>
+        <div class="empty-state" id="suppliersEmpty" hidden>
+          <p>No suppliers yet</p>
+          <span>Add a supplier to start linking them to your products.</span>
+        </div>
+      </section>
+
+      <!-- REPORTS VIEW -->
+      <section class="view" id="view-reports">
+        <div class="report-tabs">
+          <button class="report-tab active" data-report="summary">Inventory Summary</button>
+          <button class="report-tab" data-report="lowstock">Low Stock Report</button>
+          <button class="report-tab" data-report="movement">Stock Movement History</button>
+        </div>
+
+        <div class="report-panel active" id="report-summary">
+          <div class="panel">
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Category</th><th>Products</th><th>Total Stock</th><th>Total Value</th></tr></thead>
+                <tbody id="summaryReportBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="report-panel" id="report-lowstock">
+          <div class="panel">
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Product ID</th><th>Name</th><th>Category</th><th>Stock</th><th>Reorder Level</th><th>Status</th></tr></thead>
+                <tbody id="lowStockReportBody"></tbody>
+              </table>
+            </div>
+            <div class="empty-state" id="lowStockReportEmpty" hidden>
+              <p>Everything is well stocked</p>
+              <span>No products are currently below their reorder level.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="report-panel" id="report-movement">
+          <div class="panel">
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Date</th><th>Product</th><th>Type</th><th>Quantity</th><th>Reason</th></tr></thead>
+                <tbody id="movementReportBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="productModalOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="productModalTitle">Add Product</h3>
+      <button class="modal-close" data-close-modal="productModalOverlay">&times;</button>
+    </div>
+    <form id="productForm" class="modal-body">
+      <input type="hidden" id="productId">
+      <div class="form-row">
+        <label>Product Name</label>
+        <input type="text" id="productName" required placeholder="e.g. Wireless Mouse M185">
+      </div>
+      <div class="form-grid">
+        <div class="form-row">
+          <label>Category</label>
+          <input type="text" id="productCategory" required list="categoryList" placeholder="e.g. Electronics">
+          <datalist id="categoryList"></datalist>
+        </div>
+        <div class="form-row">
+          <label>Supplier</label>
+          <select id="productSupplier" required></select>
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="form-row">
+          <label>Price (₱)</label>
+          <input type="number" id="productPrice" min="0" step="0.01" required placeholder="0.00">
+        </div>
+        <div class="form-row">
+          <label>Stock Quantity</label>
+          <input type="number" id="productStock" min="0" step="1" required placeholder="0">
+        </div>
+        <div class="form-row">
+          <label>Reorder Level</label>
+          <input type="number" id="productReorder" min="0" step="1" required placeholder="0">
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" data-close-modal="productModalOverlay">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="productSubmitBtn">Add Product</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal-overlay" id="stockModalOverlay">
+  <div class="modal modal-sm">
+    <div class="modal-head">
+      <h3 id="stockModalTitle">Add Stock</h3>
+      <button class="modal-close" data-close-modal="stockModalOverlay">&times;</button>
+    </div>
+    <form id="stockForm" class="modal-body">
+      <input type="hidden" id="stockProductId">
+      <input type="hidden" id="stockMode">
+      <p class="modal-note" id="stockProductName"></p>
+      <div class="form-row">
+        <label>Quantity</label>
+        <input type="number" id="stockQty" min="1" step="1" required placeholder="0">
+      </div>
+      <div class="form-row">
+        <label>Reason</label>
+        <input type="text" id="stockReason" required placeholder="e.g. New shipment received">
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" data-close-modal="stockModalOverlay">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="stockSubmitBtn">Confirm</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal-overlay" id="supplierModalOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="supplierModalTitle">Add Supplier</h3>
+      <button class="modal-close" data-close-modal="supplierModalOverlay">&times;</button>
+    </div>
+    <form id="supplierForm" class="modal-body">
+      <input type="hidden" id="supplierId">
+      <div class="form-row">
+        <label>Supplier Name</label>
+        <input type="text" id="supplierName" required placeholder="e.g. Pacific Trade Distributors">
+      </div>
+      <div class="form-grid">
+        <div class="form-row">
+          <label>Contact Person</label>
+          <input type="text" id="supplierContact" required placeholder="e.g. Daniel Uy">
+        </div>
+        <div class="form-row">
+          <label>Phone</label>
+          <input type="text" id="supplierPhone" required placeholder="e.g. 0917 555 0142">
+        </div>
+      </div>
+      <div class="form-row">
+        <label>Email</label>
+        <input type="email" id="supplierEmail" required placeholder="e.g. orders@supplier.com">
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" data-close-modal="supplierModalOverlay">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="supplierSubmitBtn">Add Supplier</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal-overlay" id="confirmModalOverlay">
+  <div class="modal modal-sm">
+    <div class="modal-head">
+      <h3 id="confirmModalTitle">Are you sure?</h3>
+      <button class="modal-close" data-close-modal="confirmModalOverlay">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p class="modal-note" id="confirmModalText">This action cannot be undone.</p>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" data-close-modal="confirmModalOverlay">Cancel</button>
+        <button type="button" class="btn btn-danger" id="confirmModalActionBtn">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
